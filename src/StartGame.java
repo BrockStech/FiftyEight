@@ -6,6 +6,7 @@ public class StartGame
     private static List<Card> hand;
     private static Card currentCard;
     private static UserInput input;
+    private static String flippedCards;
 
     public static void main(String[] args)
     {
@@ -14,8 +15,8 @@ public class StartGame
 
         Player player = new Player();
         hand = deck.deal();
+        flippedCards = "[ ][ ][ ][ ]\n[ ][ ][ ][ ]";
         player.setHand(hand);
-        player.showHand();
         System.out.print("\n");
         flipCard(0);
         System.out.print(redBlack() + "\n");
@@ -34,6 +35,7 @@ public class StartGame
         flipCard(7);
         System.out.print(guessValue() + "\n");
         System.out.print(isFiftyEight() + "\n");
+        userInput(flippedCards, "Final Result", null);
     }
 
     public static void flipCard(int cardIndex)
@@ -41,38 +43,43 @@ public class StartGame
         currentCard = hand.get(cardIndex);
     }
 
+    private static void updateFlippedCards()
+    {
+        flippedCards = flippedCards.replaceFirst("[ ]", currentCard.printValue());
+    }
+
     public static boolean redBlack()
     {
-        return userInput("Red or Black?", new String[]{"Red", "Black"}) == 0 ?
+        return userInput(flippedCards,"Red or Black?", new String[]{"Red", "Black"}) == 0 ?
                 currentCard.isRed() : currentCard.isBlack();
     }
 
     public static boolean highLow()
     {
-        return userInput("Higher or Lower than " + hand.get(0).printValue(), new String[]{"Higher", "Lower"}) == 0 ?
+        return userInput(flippedCards,"Higher or Lower than " + hand.get(0).printValue(), new String[]{"Higher", "Lower"}) == 0 ?
                 higher() : lower();
     }
 
     public static boolean betweenOutside(int card1, int card2)
     {
-        return userInput("In between or outside of " + hand.get(card1).printValue() + " & " + hand.get(card2).printValue(), new String[]{"In between", "Outside"}) == 0 ?
+        return userInput(flippedCards,"In between or outside of " + hand.get(card1).printValue() + " & " + hand.get(card2).printValue(), new String[]{"In between", "Outside"}) == 0 ?
                 between(card1, card2) : outside(card1, card2);
     }
 
     public static boolean guessSuit()
     {
-        return userInput("What is the suit?", new String[]{"Hearts", "Diamonds", "Clubs", "Spades"}) == currentCard.getSuit();
+        return userInput(flippedCards,"What is the suit?", new String[]{"Hearts", "Diamonds", "Clubs", "Spades"}) == currentCard.getSuit();
     }
 
     public static boolean guessCardRange()
     {
-        switch (userInput("What is the card range?",new String[]{"Low(2-5)", "Medium(6-10)", "High(Jack-Ace)"}))
+        switch (userInput(flippedCards,"What is the card range?",new String[]{"Low(2-5)", "Medium(6-10)", "High(Jack-Ace)"}))
         {
-            case 1:
+            case 0:
                 return currentCard.isLow();
-            case 2:
+            case 1:
                 return currentCard.isMedium();
-            case 3:
+            case 2:
                 return currentCard.isHigh();
             default:
                 return false;
@@ -81,7 +88,7 @@ public class StartGame
 
     public static boolean guessValue()
     {
-        return userInput("What is the card value?", new String[]{"2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace"}) + 2 == currentCard.getValue();
+        return userInput(flippedCards, "What is the card value?", new String[]{"2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace"}) + 2 == currentCard.getValue();
     }
 
     public static boolean isFiftyEight()
@@ -126,9 +133,16 @@ public class StartGame
         return card.getValue() > 10 ? 10 : card.getValue();
     }
 
-    private static int userInput(String message, String[] buttons)
+    private static int userInput(String flippedCards, String message, String[] buttons)
     {
-        input = new UserInput(message, buttons);
+        input = new UserInput(flippedCards, message, buttons);
+        updateFlippedCards();
         return input.userInputDefault();
+    }
+
+    private static void displayResult(String result)
+    {
+        input = new UserInput();
+        input.showResult(result);
     }
 }
