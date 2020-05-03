@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,5 +36,10 @@ public class Deck
     public void shuffle()
     {
         Collections.shuffle(cards);
+    }
+
+    public List<Card> deal()
+    {
+        return cards.subList(0,8);
     }
 }

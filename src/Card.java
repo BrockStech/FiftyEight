@@ -8,12 +8,17 @@ public class Card
     public Card(int suit, int value)
     {
         this.suit = suit;
-        this.value = value;
+        this.value = value + 2;
     }
 
     public boolean isRed()
     {
         return suit < 2;
+    }
+
+    public boolean isBlack()
+    {
+        return suit >= 2;
     }
 
     public boolean isLow()
@@ -31,8 +36,23 @@ public class Card
         return value > 10;
     }
 
+    public int getValue()
+    {
+        return value;
+    }
+
+    public int getSuit()
+    {
+        return suit;
+    }
+
     public String print()
     {
-        return values[value] + " of " + suits[suit];
+        return values[value - 2] + " of " + suits[suit];
+    }
+
+    public String printValue()
+    {
+        return values[value - 2];
     }
 }
